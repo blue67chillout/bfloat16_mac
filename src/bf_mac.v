@@ -64,12 +64,4 @@ always @(posedge clk) begin
     end
 end
 
-// always @(posedge clk ) begin
-//     if (rst) begin
-//         out <= 16'b0;
-//     end else if (mac_en) begin
-//         out <= {sign, exp_sum, mant_result};
-//     end
-// end
-
 endmodule
