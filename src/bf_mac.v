@@ -40,7 +40,7 @@ wire [6:0]mant_result;
 assign sign = in_1[15]^in_2[15];
 
 initial begin 
-    acc_result <= 16'b0;
+    acc_result <= 32'b0;
 end
 
 w_mul w_mul_0 (
@@ -50,17 +50,25 @@ w_mul w_mul_0 (
 );
 //assign mant_mul = a * b ;
 
+wire [31:0] acc_next;
+fp_adder uut (
+    .a(acc_result),
+    .b(out),
+    .result(acc_next)
+);
+
+
 assign exp_sum = mant_mul[15] ? in_1[14:7] + in_2[14:7] - 126 : in_1[14:7] + in_2[14:7] - 127; 
 
 assign mant_result = mant_mul[15] ? mant_mul[14:6] : mant_mul[13:5];
 
-assign out = {sign, exp_sum, mant_result};
+assign out = {sign, exp_sum, mant_result,16'b0};
 
 always @(posedge clk) begin
     if (rst) begin
-        acc_result <= 16'b0;
+        acc_result <= 32'b0;
     end else if (mac_en) begin
-        acc_result <= acc_result + out;
+        acc_result <= acc_next;
     end
 end
 
