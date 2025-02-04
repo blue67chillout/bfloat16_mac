@@ -9,12 +9,13 @@ wire [7:0]exp_diff;
 wire [23:0]in_1_aligned_mant;
 wire [23:0]in_2_aligned_mant;
 wire [24:0]mant_sum;
+wire [7:0]final_exp;
 
-assign sign = (in_1[31]==in_2[31]) ? in_1[31] : (in_1 > in_2) ? in_1[31] : in_2[31];
-assign exp_diff = ( in_1 > in_2 ) ? in_1[30:23] - in_2[30:23] : in_2[30:23] - in_1[30:23];
-
-assign in_1_aligned_mant = (in_1 > in_2) ? {1'b1,in_1[22:0]} : ({1'b1,in_1[22:0]}>>exp_diff);
-assign in_2_aligned_mant = (in_2 > in_1) ? {1'b1,in_2[22:0]} : ({1'b1,in_2[22:0]}>>exp_diff);
+assign exp_diff = ( in_1[30:23] > in_2[30:23] ) ? in_1[30:23] - in_2[30:23] : in_2[30:23] - in_1[30:23];
+assign final_exp = (in_1[30:23] > in_2[30:23]) ? in_1[30:23] : in_2[30:23];
+assign in_1_aligned_mant = (in_1[30:23] > in_2[30:23]) ? {1'b1,in_1[22:0]} : ({1'b1,in_1[22:0]}>>exp_diff);
+assign in_2_aligned_mant = (in_2[30:23] > in_1[30:23]) ? {1'b1,in_2[22:0]} : ({1'b1,in_2[22:0]}>>exp_diff);
+assign sign = (in_1_aligned_mant > in_2_aligned_mant) ? in_1[31] : in_2[31];
 
 assign mant_sum = (in_1[31] == in_2[31]) ? in_1_aligned_mant + in_2_aligned_mant : in_1_aligned_mant - in_2_aligned_mant;
 
